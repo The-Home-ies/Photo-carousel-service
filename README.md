@@ -6,7 +6,9 @@ Gets all favorites that specified user has favorited.
 **Path Parameters:**
 userId: _required, string_
 Target user’s id
+
 **Request Body:** none
+
 **Example Response**:
 {data: [
   {
@@ -36,7 +38,9 @@ Target user’s id
 
 **GET**: /api/photo-carousel/{_id_}/photos
 Gets photos based on id of photos.
+
 **request body:** none
+
 **Path Parameters:**
 id: _required, string_
 Target photo's id
