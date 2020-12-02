@@ -20,4 +20,5 @@ app.post('/api/photo-carousel/favorites/', database.postFavorite);
 
 app.put('/api/photo-carousel/favorites/', database.updateFavorite);
 
+
 app.listen(PORT, () => { console.log('server is listening at port ', PORT); });
