@@ -1,15 +1,16 @@
 
-## Photo Carousel API
+# Photo Carousel API
+## Gets all favorites that specified user has favorited.
 **GET**: /api/photo-carousel/favorites/{_userId_}
-Gets all favorites that specified user has favorited.
+
 
 **Path Parameters:**
 userId: _required, string_
 Target user’s id
 
 **Request Body:** none
-
-**Example Response**:
+**Success Status Code:** 200
+**Example Response**: type: JSON
 {data: [
   {
     favoriteLists: [ 3, 87, 46 ],
@@ -36,16 +37,18 @@ Target user’s id
     __v: 0
   }]
 
+
+## Gets photos based on id of photos.
 **GET**: /api/photo-carousel/{_id_}/photos
-Gets photos based on id of photos.
+
 
 **request body:** none
-
+**Success Status Code:** 200
 **Path Parameters:**
 id: _required, string_
 Target photo's id
 
-**Example response**:
+**Example response**: type: JSON
 {data: {
     _id: 5fc6e133fa2ebcf5c1ad9cb8,
     id: 97,
@@ -84,26 +87,36 @@ Target photo's id
 }
 }
 
+
+## Creates a new favoriteList and posts picture to list.
 **POST**: /api/photo-carousel/favorites
-Creates a new favoriteList and posts picture to list.
+
 
 **request body:** {userId: <userId>, listName: <listName>}
 
-**response:** status 200
+**response:** JSON status 200
 
 
+## Updates favorites status
 **PUT**: /api/photo-carousel/favorites
-Updates favorites status
-**request body:** n/a
-**response:** status 200
 
+**request body:** n/a
+**response:** JSON status 200
+{
+    "userId": 1,
+    "listName": "US of A"
+}
+
+
+## Deletes list from database
 **DELETE**:  /api/photo-carousel/favorites/{listName}
-Deletes list from database
+
 **Path Parameters:**
 listName: _required, string_
 Target list name to delete
 **request body:** n/a
 **response:** status 200
+
 
 
 ################################################################
