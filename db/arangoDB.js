@@ -9,6 +9,7 @@ db.createDatabase('photo')
 
 function cb () {
 db.useDatabase('photo');
+// a user that hosts that property. could potentially have information about the host about the listing. Storing infomation associated with the host
 var listingSchema = {
   'rule' : {
     'type' : 'object',
@@ -44,6 +45,7 @@ var listingSchema = {
 /* Update the schema of an existing collection */
 // db.schemaCollection.properties({ "schema": schema });
 
+// can also add here whether or not the user is a host
 var listingCollection = db.collection('photos');
 
 listingCollection.create('photos', {"schema": listingSchema}).then(

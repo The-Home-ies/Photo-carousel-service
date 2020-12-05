@@ -14,7 +14,7 @@
 -- Table 'photos'
 --
 -- ---
-
+-- could potentially model out amenities, also have a field that is a host
 -- DROP SCHEMA photocarousel CASCADE;
 -- CREATE SCHEMA photocarousel;
 
@@ -23,13 +23,22 @@ DROP TABLE IF EXISTS photocarousel.listingDetails;
 CREATE TABLE photocarousel.listingDetails (
   listingId SERIAL PRIMARY KEY,
   listingName VARCHAR(100) NOT NULL,
-  listingDescription VARCHAR(250) NOT NULL
+  listingDescription VARCHAR(250) NOT NULL,
   listingLocation VARCHAR(100) NOT NULL,
   listingStars REAL,
   listingNumReviews SMALLINT,
-  photos VARCHAR[]
+  hostName VARCHAR(100),
   --will benchmark embedded photo array and separate photo table later for query speed improvements.
 );
+
+--create another table for just photos
+DROP TABLE IF EXISTS photocarousel.photos;
+
+CREATE TABLE photocarousel.photos (
+  photoId SERIAL PRIMARY KEY,
+  photos VARCHAR,
+  listingId INT REFERENCES photocarousel.listingDetails,
+)
 
 
 DROP TABLE IF EXISTS photocarousel.userLists;
@@ -50,19 +59,20 @@ CREATE TABLE photocarousel.favoriteListings (
   favoriteId SERIAL PRIMARY KEY,
   listName VARCHAR(100) REFERENCES userLists(listName),
   listingId INT REFERENCES listingDetails(listingId),
-  order SMALLINT NOT NULL
+  -- order SMALLINT NOT NULL
 );
 
 -- ---
 -- Table 'favorites'
 --
 -- ---
-
-DROP TABLE IF EXISTS photocarouse.users;
+-- could have a property that holds info about whether or not the user is a host. if is a host, have a foreign key with the host id.
+DROP TABLE IF EXISTS photocarousel.users;
 
 CREATE TABLE photocarousel.users (
   userId SERIAL PRIMARY KEY,
-  userName VARCHAR(100) NOT NULL
+  userName VARCHAR(100) NOT NULL,
+  isHost BOOLEAN,
 );
 
 -- ---

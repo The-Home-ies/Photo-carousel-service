@@ -1,7 +1,7 @@
 
 # Photo Carousel API
 ## Gets all favorites that specified user has favorited.
-**GET**: /api/photo-carousel/favorites/{_userId_}
+**GET**: /api/photo-carousel/favorites/:id
 
 
 **Path Parameters:**
@@ -9,41 +9,21 @@ userId: _required, string_
 Target user’s id
 
 **Request Body:** none
+
 **Success Status Code:** 200
+
 **Example Response**: type: JSON
-{data: [
-  {
-    favoriteLists: [ 3, 87, 46 ],
-    _id: 5fc6e133fa2ebcf5c1ada035,
-    userId: 1,
-    listName: 'Utah',
-    favoritePicture: 'https://s3-us-west-1.amazonaws.com/fec.home.images/Optimized/photo-1486946255434-2466348c2166_optimized.jpg',
-    __v: 0
-  },
-  {
-    favoriteLists: [ 9, 13, 75, 47, 33, 43 ],
-    _id: 5fc6e133fa2ebcf5c1ada036,
-    userId: 1,
-    listName: 'Michigan',
-    favoritePicture: 'https://s3-us-west-1.amazonaws.com/fec.home.images/Optimized/photo-1484154218962-a197022b5858_optimized.jpg',
-    __v: 0
-  },
-  {
-    favoriteLists: [ 31, 97, 22, 84, 73, 7 ],
-    _id: 5fc6e133fa2ebcf5c1ada037,
-    userId: 2,
-    listName: 'Washington',
-    favoritePicture: 'https://s3-us-west-1.amazonaws.com/fec.home.images/Optimized/photo-1575413905463-3750e44edafe_optimized.jpg',
-    __v: 0
-  }]
 
 
-## Gets photos based on id of photos.
-**GET**: /api/photo-carousel/{_id_}/photos
+
+## Gets photos based on id of listing.
+**GET**: /api/photo-carousel/:listingId/photos
 
 
 **request body:** none
+
 **Success Status Code:** 200
+
 **Path Parameters:**
 id: _required, string_
 Target photo's id
@@ -96,6 +76,21 @@ Target photo's id
 
 **response:** JSON status 200
 
+## Creates a new Listing and posts picture to list.
+**POST**: /api/photo-carousel/listing
+
+
+**request body:** {listingId,
+  listingName,
+  listingDescription,
+  listingLocation,
+  listingStars,
+  listingNumReviews,
+  hostName,
+  amenities}
+
+**response:** JSON status 200
+
 
 ## Updates favorites status
 **PUT**: /api/photo-carousel/favorites
@@ -107,9 +102,15 @@ Target photo's id
     "listName": "US of A"
 }
 
+## Updates listing for host
+**PUT**: /api/photo-carousel/:listingId
+
+**request body:** n/a
+**response:** JSON status 200
+
 
 ## Deletes list from database
-**DELETE**:  /api/photo-carousel/favorites/{listName}
+**DELETE**:  /api/photo-carousel/favorites/:listName
 
 **Path Parameters:**
 listName: _required, string_
