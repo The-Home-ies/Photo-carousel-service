@@ -2,8 +2,11 @@ const fs = require('fs');
 const csvWriter = require('csv-write-stream');
 var writer = csvWriter();
 var faker = require('faker');
-require('events').EventEmitter.defaultMaxListeners = 100000;
 
+//for json, change writer to just fs.createWriteStream
+// use modulo with existing arrays. index lookup on array instead of Math.random()
+// [1,2,3]
+// [3,4,5,6]
 const writeListings = fs.createWriteStream('listings-data.csv');
   writeListings.write('listingId,listingName,listingDescription,listingLocation,listingStars,listingNumReviews\n', 'utf8');
 
@@ -14,7 +17,7 @@ const listingsGen = (writer, encoding, callback) => {
   function write() {
     var ok = true;
     do{
-      i++;
+        i++;
         const listingId = i;
         const listingName= faker.lorem.word();
         const listingDescription= faker.lorem.words();
@@ -29,6 +32,39 @@ const listingsGen = (writer, encoding, callback) => {
       }
     } while(i < NUM_LISTINGS && ok);
     if(i < NUM_LISTINGS) {
+      //console.log('in here', i)
+      writer.once('drain', write);
+    }
+  }
+  write();
+  console.log('done');
+};
+
+const writePhotos = fs.createWriteStream('photos-data.csv');
+  writePhotos.write('photoId,photos,listingId\n', 'utf8');
+// photos stored: from 79 to 610 in jpeg
+const photosGen = (writer, encoding, callback) => {
+  let m = 0
+
+  const NUM_PHOTOS = 1;
+  const URL = 'https://s3-us-west-1.amazonaws.com/fec.hr/apartments';
+    const FORMAT = '.jpeg';
+  function write() {
+    var ok = true;
+
+    do{
+      m++;
+      const photoId= m;
+      const photo= URL+((m%520)+79) + FORMAT;
+      const listingId = Math.floor((Math.random() * 100000) + 1)
+      const data = `${photoId},${photo},${listingId}\n`;
+      if (m === NUM_PHOTOS- 1) {
+        ok = writer.write(data, encoding, callback);
+      } else {
+        ok = writer.write(data, encoding);
+      }
+    } while(m < NUM_PHOTOS && ok);
+    if(m < NUM_PHOTOS) {
       //console.log('in here', i)
       writer.once('drain', write);
     }
@@ -38,30 +74,27 @@ const listingsGen = (writer, encoding, callback) => {
 };
 
 const writeUsers = fs.createWriteStream('users-data.csv');
-  writeUsers.write('listingId,listingName,listingDescription,listingLocation,listingStars,listingNumReviews\n', 'utf8');
+  writeUsers.write('userId,userName,isHost\n', 'utf8');
 
 const usersGen = (writer, encoding, callback) => {
-  let i = 0
+  let j = 0
 
-  const NUM_USERS = 10000000;
+  const NUM_USERS = 1;
   function write() {
     var ok = true;
     do{
-      i++;
-        const listingId = i;
-        const listingName= faker.lorem.word();
-        const listingDescription= faker.lorem.words();
-        const listingLocation = faker.address.city();
-        const listingStars = Math.ceil(Math.random() * 5);
-        const listingNumReviews = Math.floor(Math.random() * 100);
-        const data = `${listingId},${listingName},${listingDescription},${listingLocation},${listingStars},${listingNumReviews}\n`
-      if (i === NUM_LISTINGS- 1) {
+      j++;
+      const userId= j;
+      const userName= faker.lorem.word();
+      const isHost= j%2 === 0
+        const data = `${userId},${userName},${isHost}\n`
+      if (j === NUM_USERS- 1) {
         ok = writer.write(data, encoding, callback);
       } else {
         ok = writer.write(data, encoding);
       }
-    } while(i < NUM_LISTINGS && ok);
-    if(i < NUM_LISTINGS) {
+    } while(j < NUM_USERS && ok);
+    if(j < NUM_USERS) {
       //console.log('in here', i)
       writer.once('drain', write);
     }
@@ -69,95 +102,89 @@ const usersGen = (writer, encoding, callback) => {
   write();
   console.log('done');
 };
-// const listingsGen = () => {
-//   writer.pipe(fs.createWriteStream('users-data.csv'));
-//   for (var i = 0; i < 1000000; i++) {
-//     writer.write({
-//       listingId: i+1,
-//       listingName: faker.lorem.word(),
-//       listingDescription: faker.lorem.words(),
-//       listingLocation: faker.address.city(),
-//       listingStars: Math.ceil(Math.random() * 5),
-//       listingNumReviews: Math.floor(Math.random() * 100)
-//     });
-//   }
-//   writer.end();
-//   console.log('done ');
-// };
-// const usersGen = () => {
-//   writer.pipe(fs.createWriteStream('users-data.csv'));
-//   for (var j = 0; j < 1000000; j++) {
-//     writer.write({
-//       listingId: j+1,
-//       userName: faker.lorem.word(),
-//       isHost: j%2 === 0
-//       // insert random data here
-//     })
-//   }
-//   writer.end();
-//   console.log('done ');
-// };
-const favoritesGen = () => {
-  writer.pipe(fs.createWriteStream('favorites-data.csv'));
-  for (var k = 0; k < 10000000; k++) {
-    writer.write({
-      listingId: k+1,
-      listingName: faker.lorem.word(),
-      listingDescription: faker.lorem.words(),
-      listingLocation: faker.address.city(),
-      listingStars: Math.ceil(Math.random() * 5),
-      listingNumReviews: Math.floor(Math.random() * 100),
-      photos: [faker.image.image()]
-      // insert random data here
-    })
+
+const writeUserLists = fs.createWriteStream('userLists-data.csv');
+  writeUserLists.write('listId,listName,userId\n', 'utf8');
+const findUniqueListName = (dict) => {
+  var name = faker.lorem.word();
+  while(dict[name]) {
+    console.log(dict[name])
+    name = faker.lorem.word();
   }
-  writer.end();
-  console.log('done with 10m');
-};
-const userListsGen = () => {
-  writer.pipe(fs.createWriteStream('userlists-data.csv'));
-  for (var l = 0; l < 10000000; l++) {
-    writer.write({
-      listingId: l+1,
-      listingName: faker.lorem.word(),
-      listingDescription: faker.lorem.words(),
-      listingLocation: faker.address.city(),
-      listingStars: Math.ceil(Math.random() * 5),
-      listingNumReviews: Math.floor(Math.random() * 100),
-      photos: [faker.image.image()]
+  dict[name] = true;
+  console.log('outside')
+  return name;
+}
+const userListsGen = (writer, encoding, callback) => {
+  let l = 0
+  var listNameDict={};
+  const NUM_USERLISTS = 1;
+  function write() {
+    var ok = true;
 
-
-      // insert random data here
-    })
+    do{
+      l++;
+      const listId= l;
+      const listName= faker.lorem.word();
+      const userId = Math.floor((Math.random() * 100000))+ 1;
+       //+ 9000000);
+      const data = `${listId},${listName},${userId}\n`;
+      if (l === NUM_USERLISTS- 1) {
+        ok = writer.write(data, encoding, callback);
+      } else {
+        ok = writer.write(data, encoding);
+      }
+    } while(l < NUM_USERLISTS && ok);
+    if(l < NUM_USERLISTS) {
+      //console.log('in here', i)
+      writer.once('drain', write);
+    }
   }
-  writer.end();
-  console.log('done with 10m');
+  write();
+  console.log('done');
 };
-const favoriteListsGen = () => {
-  writer.pipe(fs.createWriteStream('favoriteLists-data.csv'));
-  for (var m = 0; m < 10000000; m++) {
-    writer.write({
-      listingId: m+1,
-      listingName: faker.lorem.word(),
-      listingDescription: faker.lorem.words(),
-      listingLocation: faker.address.city(),
-      listingStars: Math.ceil(Math.random() * 5),
-      listingNumReviews: Math.floor(Math.random() * 100),
-      photos: [faker.image.image()]
 
+const writeFavorites = fs.createWriteStream('favoriteListings-data.csv');
+  writeFavorites.write('favoriteId,listId,listingId\n', 'utf8');
 
-      // insert random data here
-    })
+const favoriteListingsGen = (writer, encoding, callback) => {
+  let k = 0
+
+  const NUM_FAVORITES = 1;
+  function write() {
+    var ok = true;
+    do{
+      k++;
+      const favoriteId= k+1;
+      const listId= Math.ceil(Math.random()* 10000);
+      const listingId= Math.ceil(Math.random()* 10000);
+      const data = `${favoriteId},${listId},${listingId}\n`;
+      if (k === NUM_FAVORITES- 1) {
+        ok = writer.write(data, encoding, callback);
+      } else {
+        ok = writer.write(data, encoding);
+      }
+    } while(k < NUM_FAVORITES && ok);
+    if(k < NUM_FAVORITES) {
+      //console.log('in here', i)
+      writer.once('drain', write);
+    }
   }
-  writer.end();
-  console.log('done with 10m');
+  write();
+  console.log('done');
 };
+
+
+
+
 
 function dataGen() {
    listingsGen(writeListings, 'utf-8', () => {writeListings.end()});
-  //  usersGen();
-  //  favoritesGen();
-  //  userListsGen();
-  //  photosGen();
+  photosGen(writePhotos, 'utf-8', () => {writePhotos.end()});
+   usersGen(writeUsers, 'utf-8', () => {writeUsers.end()});
+    userListsGen(writeUserLists, 'utf-8', () => {writeUserLists.end()});
+    favoriteListingsGen(writeFavorites, 'utf-8', () => {writeFavorites.end()});
+
+
 }
 dataGen();

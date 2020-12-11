@@ -10,69 +10,60 @@
 -- SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- SET FOREIGN_KEY_CHECKS=0;
 
--- ---
--- Table 'photos'
---
--- ---
--- could potentially model out amenities, also have a field that is a host
--- DROP SCHEMA photocarousel CASCADE;
--- CREATE SCHEMA photocarousel;
+DROP SCHEMA photocarousel CASCADE;
+CREATE SCHEMA photocarousel;
 
 DROP TABLE IF EXISTS photocarousel.listingDetails;
-
+-- 1m
 CREATE TABLE photocarousel.listingDetails (
   listingId SERIAL PRIMARY KEY,
   listingName VARCHAR(100) NOT NULL,
   listingDescription VARCHAR(250) NOT NULL,
   listingLocation VARCHAR(100) NOT NULL,
   listingStars REAL,
-  listingNumReviews SMALLINT,
-  hostName VARCHAR(100),
-  --will benchmark embedded photo array and separate photo table later for query speed improvements.
+  listingNumReviews SMALLINT
+  -- hostName VARCHAR(100)
+  --should hostName be a foreign key?
 );
 
 --create another table for just photos
+-- 10m
 DROP TABLE IF EXISTS photocarousel.photos;
 
 CREATE TABLE photocarousel.photos (
   photoId SERIAL PRIMARY KEY,
-  photos VARCHAR,
-  listingId INT REFERENCES photocarousel.listingDetails,
-)
-
-
-DROP TABLE IF EXISTS photocarousel.userLists;
-
-CREATE TABLE photocarousel.userLists (
-  listName VARCHAR(100) NOT NULL,
-  userId INT REFERENCES users(userId),
+  photo VARCHAR,
+  listingId INT
+  -- listingId INT REFERENCES photocarousel.listingDetails
 );
 
--- ---
--- Table 'favoritelists'
---
--- ---
 
-DROP TABLE IF EXISTS photocarousel.favoriteListings;
 
-CREATE TABLE photocarousel.favoriteListings (
-  favoriteId SERIAL PRIMARY KEY,
-  listName VARCHAR(100) REFERENCES userLists(listName),
-  listingId INT REFERENCES listingDetails(listingId),
-  -- order SMALLINT NOT NULL
-);
-
--- ---
--- Table 'favorites'
---
--- ---
--- could have a property that holds info about whether or not the user is a host. if is a host, have a foreign key with the host id.
 DROP TABLE IF EXISTS photocarousel.users;
-
+-- 10m
 CREATE TABLE photocarousel.users (
   userId SERIAL PRIMARY KEY,
   userName VARCHAR(100) NOT NULL,
-  isHost BOOLEAN,
+  isHost BOOLEAN
+);
+
+DROP TABLE IF EXISTS photocarousel.userLists;
+-- favorite list names, 1m
+CREATE TABLE photocarousel.userLists (
+  listId SERIAL PRIMARY KEY,
+  listName VARCHAR(100),
+  userId INT
+  --userId INT REFERENCES photocarousel.users(userId)
+);
+
+DROP TABLE IF EXISTS photocarousel.favoriteListings;
+-- listings that have been favorited, 10m%1m
+CREATE TABLE photocarousel.favoriteListings (
+  favoriteId SERIAL PRIMARY KEY,
+  listId INT,
+  --listId INT REFERENCES photocarousel.userLists(listId),
+  listingId INT
+  --listingId INT REFERENCES photocarousel.listingDetails(listingId)
 );
 
 -- ---
