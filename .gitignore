@@ -29,5 +29,5 @@ photoCarousel.pem
 
 #csv files
 *.csv
-listings-data.csv
-favorites-data.csv
+
+newrelic.js

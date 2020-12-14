@@ -1,14 +1,15 @@
+require('newrelic');
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const morgan = require('morgan');
+//const morgan = require('morgan');
 const database = require('../db/mongoController.js');
 
 const PORT = 3001;
 const PATH = path.join(__dirname, '/../client/dist');
 const app = express();
 
-app.use(morgan('dev'));
+//app.use(morgan('dev'));
 app.use('/:id/', express.static(PATH));
 app.use(bodyParser.json());
 

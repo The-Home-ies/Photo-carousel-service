@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
-
-mongoose.connect('mongodb://localhost/sdcservice', { useNewUrlParser: true, useUnifiedTopology: true });
+const connections = 15;
+mongoose.connect('mongodb://localhost/sdcservice', { useNewUrlParser: true, useUnifiedTopology: true,
+poolSize: connections });
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', () => console.log('connected to mongoose!'));
+db.once('open', () => console.log(`connected to mongoose with ${connections} connections!`));
 const Schema = mongoose.Schema;
 
 const listingDetailsSchema = new Schema({

@@ -1,5 +1,4 @@
 const db = require('./mongoDB.js');
-
 module.exports = {
   getPhotos: (req, res) => {
     db.ListingDetails.find({ listingId: req.params.id }).exec((err, results) => {
