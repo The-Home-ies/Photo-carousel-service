@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const connections = 15;
-mongoose.connect('mongodb://localhost/sdcservice', { useNewUrlParser: true, useUnifiedTopology: true,
+mongoose.connect('mongodb://54.183.147.212/sdcservice', { useNewUrlParser: true, useUnifiedTopology: true,
 poolSize: connections });
 
 const db = mongoose.connection;

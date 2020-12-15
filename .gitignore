@@ -30,4 +30,4 @@ photoCarousel.pem
 #csv files
 *.csv
 
-newrelic.js
+#newrelic.js
