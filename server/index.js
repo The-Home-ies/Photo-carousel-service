@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 
 app.get('/api/photo-carousel/:id/photos/', database.getPhotos);
 
-// app.get('/api/photo-carousel/favorites/:userId/', database.getFavorites);
+app.get('/api/photo-carousel/favorites/:userId/',(req, res) => {console.log('in getFavorites'); res.sendStatus(200)});
 
 app.post('/api/photo-carousel/favorites/', database.postFavorite);
 

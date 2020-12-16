@@ -46,18 +46,20 @@ class App extends React.Component {
   componentDidMount() {
     const id = window.location.pathname.split('/')[1];
     this.loadListingPhotos(id);
-    this.checkFavorite();
+    //this.checkFavorite();
   }
 
   loadListingPhotos(id) {
     axios.get(`/api/photo-carousel/${id}/photos`)
       .then((results) => {
+        console.log('here are client side results: ', results)
+        results = results.data[0];
         this.setState({
-          carouselPhotos: results.data,
-          listingName: results.data[0].listingName,
-          listingStars: results.data[0].listingStars,
-          listingNumReviews: results.data[0].listingNumReviews,
-          listingLocation: results.data[0].listingLocation,
+          carouselPhotos: results.photos,
+          listingName: results.listingName,
+          listingStars: results.listingStars,
+          listingNumReviews: results.listingNumReviews,
+          listingLocation: results.listingLocation,
         });
       })
       .catch((error) => {
@@ -181,14 +183,14 @@ class App extends React.Component {
     axios.get('/api/photo-carousel/favorites/1')
       .then((results) => {
         let isFavorite = false;
-        const favorites = results.data;
-        for (let i = 0; i < favorites.length; i += 1) {
-          favorites[i].favoriteLists.forEach((fav) => {
-            if (fav === Number(window.location.pathname.split('/')[1])) {
-              isFavorite = true;
-            }
-          });
-        }
+        // const favorites = results.data;
+        // for (let i = 0; i < favorites.length; i += 1) {
+        //   favorites[i].favoriteLists.forEach((fav) => {
+        //     if (fav === Number(window.location.pathname.split('/')[1])) {
+        //       isFavorite = true;
+        //     }
+        //   });
+        // }
         this.setState({
           isFavorite,
         });
@@ -216,7 +218,6 @@ class App extends React.Component {
     } = this.state;
 
     (this.state.showFavorites || this.state.showMosaic || this.state.showCarousel) ? document.body.style.overflowY = 'hidden' : document.body.style.overflowY = 'scroll';
-
     return (
       <div>
         <Header />
@@ -240,7 +241,7 @@ class App extends React.Component {
         </ShowAllPhotos>
         {showFavorites && <Favorites
           toggleFavorites={this.toggleFavorites}
-          mainPic={carouselPhotos[0].photo}
+          mainPic={carouselPhotos[0]}
           checkFavorite={this.checkFavorite}
           isFavoriteClosing={isFavoriteClosing}
         />}
