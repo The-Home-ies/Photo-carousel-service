@@ -1,10 +1,12 @@
 const db = require('./mongoDB.js');
 module.exports = {
   getPhotos: (req, res) => {
+    console.log('in getPhotos')
     db.ListingDetails.find({ listingId: req.params.id }).exec((err, results) => {
       if (err) {
         res.sendStatus(404);
       } else {
+        console.log('here are results: ', results);
         res.json(results);
       }
     });
