@@ -14,7 +14,8 @@ export let options = {
   ],
 };
 export default function () {
-  let res = http.get('http://54.241.52.191:3001/api/photo-carousel/01/photos/');
+  let res = http.get('http://52.53.235.167/1/');
+  // let res = http.get('http://54.241.52.191:3001/api/photo-carousel/01/photos/');
   check(res, { 'status was 200': (r) => r.status == 200 });
   sleep(1);
 }
